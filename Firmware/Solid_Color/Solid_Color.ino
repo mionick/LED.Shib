@@ -54,6 +54,9 @@ void setup() {
   //digitalWrite(CLOCKOUT , HIGH);
 }
 
+
+// =======================================================================================================================
+
 // Attempted Audio Read. Failure. Audio input is just noise.
 // AUDIO VARIABLES
 int audioSignal = 0;
@@ -80,8 +83,105 @@ void loop3() {
   
 }
 
-// Testing All three colors
+
+// =======================================================================================================================
+//                                                  SINGLE COLOR DEMO
+// =======================================================================================================================
+/*
+ * This section will read colors from serial connection and fade that color on and off.
+ * 
+ */
+// RGB
+// Start with white so we see SOMETHING at the start.
+int color[3] = {255,255,255};
+// This value will oscilate between 0 and 1 in the loop.
+float strength = 1.0;
+float fadeSpeed = 0.1;
+/*
+  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
+  routine is run between each time loop() runs, so using delay inside loop can
+  delay response. Multiple bytes of data may be available.
+*/
+void serialEvent() {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    byte selectedPin = 0;
+
+    // Select the value to change based on input char.
+    switch(inChar) {
+      case 'R':
+        setColor(0);
+      break;
+      
+      case 'G':
+        setColor(1);
+      break;
+      
+      case 'B':
+        setColor(2);
+      break;
+      
+      case 'S':
+        setFadeSpeed();
+      break;
+      
+      // Default should break out of here without doing anything. Only process messages we understand.
+      default:
+      return;
+    }
+
+
+    
+}
+
+void setFadeSpeed() {
+    float value = Serial.parseFloat();
+
+    // Sanitize input value
+    value = min(value, 1);
+    value = max(value, 0);
+
+    fadeSpeed = value;
+}
+void setColor(int index) {
+    int value = Serial.parseInt();
+
+    // Sanitize input value
+    value = min(value, PWM_HIGH);
+    value = max(value, PWM_LOW);
+
+    color[index] = value;
+}
+
 void loop() {
+  // Safety check
+  strength += fadeSpeed;
+  if ( strength > 1) {
+    strength = 1;
+    fadeSpeed = -fadeSpeed;
+  } else if (strength < 0) {
+    strength = 0;
+    fadeSpeed = -fadeSpeed;
+  }
+  for (int i = 0; i < numBuckets; i++) {
+    brightness[i] = (int)(color[i] * strength);
+  }
+  // set the brightness of outputs
+  analogWrite(REDPIN, brightness[0]);
+  analogWrite(GREENPIN, brightness[1]);
+  analogWrite(BLUEPIN, brightness[2]);
+  
+  // wait for 30 milliseconds to see the dimming effect
+  delay(30);
+}
+
+
+
+
+
+// =======================================================================================================================
+// Testing All three colors in a random Cycle
+void loop4() {
 
   // update brightness for each pin
   for (int i = 0; i < numBuckets; i++) {
