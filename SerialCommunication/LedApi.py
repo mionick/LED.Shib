@@ -1,5 +1,7 @@
 from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
+from flask_cors import CORS, cross_origin
+
 
 import time
 import serial
@@ -9,6 +11,8 @@ import json
 
 app = Flask(__name__)
 api = Api(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 ser = None
 
@@ -27,6 +31,7 @@ ser = serial.Serial('COM3', 9600)
 #need to delay the start while arduino gets set up becase it restarts when serial connects.
 time.sleep(5);
 
+
     
 def arduinoString(config):
     output = "r" + str(1 if config["isRainbow"] else 0)
@@ -43,7 +48,7 @@ def arduinoString(config):
 class LightConfig(Resource):
 
     def get(self):
-        return arduinoString(currentConfig), 200
+        return currentConfig, 200
 
     def post(self):
         req_data = request.get_data()
@@ -54,7 +59,7 @@ class LightConfig(Resource):
         return 200
 
 
-  
+
 try:
     api.add_resource(LightConfig, "/lightconfig")
     app.run(debug=True, use_reloader=False)

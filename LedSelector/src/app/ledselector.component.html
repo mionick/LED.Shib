@@ -1,0 +1,20 @@
+<div id="led-selector-wrapper">
+    <h3>Led Color Selector</h3>
+
+    <label>Select a color:</label>
+    <div id="color-picker"></div>
+    <label>Fade Speed:</label>
+    <input type="number" step="0.01" name="speed" [(ngModel)]="ledConfig.speed" />
+    <hr/>
+    <label>Rainbow mode: (OverRides Color)</label>
+    <input type="checkbox" name="isRainbow" [(ngModel)]="ledConfig.isRainbow" />
+    <label>Rainbow Speed:</label>
+    <input type="number" step="0.01" name="angularSpeed" [(ngModel)]="ledConfig.angularSpeed" />
+    <hr/>
+    <label>Prevent Fading:</label>
+    <input type="checkbox" name="isSolid" [(ngModel)]="ledConfig.isSolid" />
+    <label>Strength of Solid Light:</label>
+    <input type="number" step="0.1" name="strength" [(ngModel)]="ledConfig.strength" />
+    <hr/>
+    <button (click)="sendConfig()">Send Configuration</button>
+</div>

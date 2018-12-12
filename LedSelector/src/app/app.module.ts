@@ -1,16 +1,33 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Injector, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { createCustomElement } from '@angular/elements';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
-import { AppComponent } from './app.component';
+import { LedSelectorComponent } from './ledselector.component';
+import { LedConfigurationService } from 'src/app/led-configuration.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    LedSelectorComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule,
+    HttpClientModule
+
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [ LedConfigurationService ],
+  entryComponents: [LedSelectorComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private injector: Injector) {
+  }
+  
+  
+  ngDoBootstrap() {
+    const myCustomElement = createCustomElement(LedSelectorComponent, { injector: this.injector });
+    customElements.define('ng-led-selector', myCustomElement);
+  }
+}

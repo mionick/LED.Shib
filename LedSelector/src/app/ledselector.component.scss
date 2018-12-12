@@ -1,0 +1,23 @@
+
+label {
+    display: block;
+    margin-top: 5px;
+}
+h3 {
+    text-align: center;
+}
+#led-selector-wrapper {
+    border: 1px solid darkgray;
+    border-radius: 5%;
+    padding: 5%;
+    background: #DDD;
+    max-width: 500px;
+
+}
+
+button {
+    padding: 5px;
+    border-radius: 5px;
+    background: #222;
+    color:#FFF;
+}
